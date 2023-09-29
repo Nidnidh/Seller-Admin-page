@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seller Admin Page</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Seller Admin Page</h1>
+        <h2>Total Stock Value: <span id="totalStockValue">$0</span></h2>
+        
+      
+        <h3>Add New Item</h3>
+        <form id="addItemForm">
+            <label for="itemName">Item Name:</label>
+            <input type="text" id="itemName" required>
+            <label for="itemPrice">Item Price:</label>
+            <input type="number" id="itemPrice" required>
+            <button type="submit" class="button">Add Item</button>
+        </form>
+
+  
+        <h3>Stock</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>Item Price</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="stockTableBody">
+                
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const addItemForm = document.getElementById("addItemForm");
+        const itemNameInput = document.getElementById("itemName");
+        const itemPriceInput = document.getElementById("itemPrice");
+        const stockTableBody = document.getElementById("stockTableBody");
+        const totalStockValueSpan = document.getElementById("totalStockValue");
+
+        let stock = [];
+
+        addItemForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            const itemName = itemNameInput.value.trim();
+            const itemPrice = parseFloat(itemPriceInput.value);
+            if (itemName && !isNaN(itemPrice)) {
+                const newItem = { name: itemName, price: itemPrice };
+                stock.push(newItem);
+                displayStock();
+                updateTotalStockValue();
+                addItemForm.reset();
+            }
+        });
+
+        function displayStock() {
+            stockTableBody.innerHTML = "";
+            for (const item of stock) {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${item.name}</td>
+                    <td>$${item.price.toFixed(2)}</td>
+                    <td>
+                        <button class="button" onclick="removeItem('${item.name}')">Remove</button>
+                    </td>
+                `;
+                stockTableBody.appendChild(row);
+            }
+        }
+
+        function removeItem(itemName) {
+            stock = stock.filter(item => item.name !== itemName);
+            displayStock();
+            updateTotalStockValue();
+        }
+
+        function updateTotalStockValue() {
+            const totalValue = stock.reduce((acc, item) => acc + item.price, 0);
+            totalStockValueSpan.textContent = `$${totalValue.toFixed(2)}`;
+        }
+
+    </script>
+</body>
+</html>
